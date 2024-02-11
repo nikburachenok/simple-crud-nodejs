@@ -5,7 +5,8 @@ import {
     getUsersDBL,
     saveUserDBL,
     getUserByIdDBL,
-    removeUserDBL
+    removeUserDBL,
+    updateUserDBL
 } from './repository';
 import { User } from "./model";
 
@@ -48,7 +49,7 @@ export const saveUser = (req: http.IncomingMessage, res: http.ServerResponse<htt
     });
     req.on('end', () => {
         try {
-            const { username, age, hobbies} = JSON.parse(requestBody);
+            const { username, age, hobbies, id} = JSON.parse(requestBody);
             let isValidInput =
                 typeof username === 'string' &&
                 typeof age === 'number' &&
@@ -56,13 +57,23 @@ export const saveUser = (req: http.IncomingMessage, res: http.ServerResponse<htt
                 !hobbies?.find((item: any) => {
                     return typeof item !== 'string';
                 });
+            if (id) {
+                sendResponse(
+                    res,
+                    500,
+                    { "Content-Type": "application/json" },
+                    `You cannot set user id. This parameter will be set automatically`
+                );
+                return;
+            }
             if (isValidInput) {
                 const user = JSON.parse(requestBody) as User;
                 const newUserId = saveUserDBL(user);
                 sendResponse(
                     res,
                     201,
-                    { "Content-Type": "application/json" }, `The new user was saved with id:${newUserId}`
+                    { "Content-Type": "application/json" },
+                    `The new user was saved with id:${newUserId}`
                 );
             } else {
                 sendResponse(
@@ -93,7 +104,67 @@ export const updateUser = (req: http.IncomingMessage, res: http.ServerResponse<h
         );
         return;
     }
-    // Update user
+
+    let requestBody = '';
+    req.on('data', (chunk) => {
+        requestBody += chunk;
+    });
+    req.on('end', () => {
+        try {
+            const { username, age, hobbies, id} = JSON.parse(requestBody);
+            let isValidInput =
+                typeof username === 'string' ||
+                typeof age === 'number' ||
+                (   Array.isArray(hobbies) &&
+                    !hobbies?.find((item: any) => {
+                        return typeof item !== 'string';
+                    })
+                );
+
+            if (id) {
+                sendResponse(
+                    res,
+                    500,
+                    { "Content-Type": "application/json" },
+                    `You cannot update user id`
+                );
+                return;
+            }
+            if (isValidInput) {
+                const user = JSON.parse(requestBody) as User;
+                const updatedUser = updateUserDBL(userId, user);
+                if (updatedUser) {
+                    sendResponse(
+                        res,
+                        200,
+                        { "Content-Type": "application/json" },
+                        updatedUser
+                    );
+                } else {
+                    sendResponse(
+                        res,
+                        404,
+                        { "Content-Type": "application/json" },
+                        `User with id equals ${userId} does not exists`
+                    );
+                }
+            } else {
+                sendResponse(
+                    res,
+                    500,
+                    { "Content-Type": "application/json" },
+                    'The new user record does not contain one of the following required parameters or has wrong type of parameter'
+                );
+            }
+        } catch (error) {
+            sendResponse(
+                res,
+                500,
+                { "Content-Type": "application/json" },
+                'The new user record does not contain one of the following required parameters or has wrong type of parameter'
+            );
+        }
+    });
 }
 
 export const removeUser = (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>, userId: string) => {

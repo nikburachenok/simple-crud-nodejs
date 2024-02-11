@@ -18,7 +18,7 @@ export const saveUserDBL = (user: User) => {
     return user.id;
 };
 
-const updateUser = (userId: string, updatedUser: User) => {
+export const updateUserDBL = (userId: string, updatedUser: User) => {
     const userIndex = users.findIndex(user => user.id === userId);
 
     if (userIndex !== -1) {
