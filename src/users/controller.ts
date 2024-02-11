@@ -86,9 +86,9 @@ export const saveUser = (req: http.IncomingMessage, res: http.ServerResponse<htt
         } catch (error) {
             sendResponse(
                 res,
-                400,
+                500,
                 { "Content-Type": "application/json" },
-                'The new user record does not contain one of the following required parameters or has wrong type of parameter'
+                'Cannot process sended record'
             );
         }
     });
@@ -161,7 +161,7 @@ export const updateUser = (req: http.IncomingMessage, res: http.ServerResponse<h
                 res,
                 500,
                 { "Content-Type": "application/json" },
-                'The new user record does not contain one of the following required parameters or has wrong type of parameter'
+                'Cannot process sended record'
             );
         }
     });
