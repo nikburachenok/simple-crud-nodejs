@@ -7,6 +7,7 @@ import {
     updateUser,
     removeUser
 } from '../users/controller';
+import { sendResponse } from './responseSender';
 
 export const launchRouter = (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
     if (req.url) {
@@ -23,7 +24,7 @@ export const launchRouter = (req: http.IncomingMessage, res: http.ServerResponse
             console.log('5555555');
             removeUser(req, res, '');
         } else {
-            // 404
+            sendResponse(res, 500, { "Content-Type": "application/json" }, 'Server cannot handle this URL, please use correct URL')
         }
     }
 }
