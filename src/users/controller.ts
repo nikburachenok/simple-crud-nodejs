@@ -1,11 +1,15 @@
 import http from 'http';
 import * as uuid from 'uuid';
 import { sendResponse } from '../handlers/responseSender';
-import { getUsersDBL, saveUserDBL } from './repository';
+import {
+    getUsersDBL,
+    saveUserDBL,
+    getUserByIdDBL
+} from './repository';
 import { User } from "./model";
 
 export const getUsers = (res: http.ServerResponse<http.IncomingMessage>) => {
-    sendResponse(res, 200, { "Content-Type": "application/json" }, JSON.stringify(getUsersDBL()));
+    sendResponse(res, 200, { "Content-Type": "application/json" }, getUsersDBL());
 }
 
 export const getUserById = (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>, userId: string) => {
@@ -18,7 +22,22 @@ export const getUserById = (req: http.IncomingMessage, res: http.ServerResponse<
         );
         return;
     }
-    // Get user by Id
+    const user = getUserByIdDBL(userId);
+    if (user) {
+        sendResponse(
+            res,
+            200,
+            { "Content-Type": "application/json" },
+            user
+        );
+    } else {
+        sendResponse(
+            res,
+            404,
+            { "Content-Type": "application/json" },
+            `User with id equals ${userId} does not exists`
+        );
+    }
 }
 
 export const saveUser = (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {

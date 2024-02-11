@@ -7,7 +7,7 @@ export const getUsersDBL = () => {
     return users;
 };
 
-export const getUserById = (userId: string) => {
+export const getUserByIdDBL = (userId: string) => {
     return users.find((user) => user.id === userId);
 };
 
