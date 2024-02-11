@@ -36,7 +36,7 @@ export const launchRouter = (req: http.IncomingMessage, res: http.ServerResponse
         } else {
             sendResponse(
                 res,
-                500,
+                404,
                 { "Content-Type": "application/json" },
                 'Server cannot handle this URL, please use correct URL'
             );

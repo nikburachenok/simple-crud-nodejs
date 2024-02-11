@@ -4,7 +4,8 @@
   "description": "The application with simple API for creating, reading, updating and deleting users",
   "main": "src/index.ts",
   "scripts": {
-    "start": "npx nodemon src/index.ts"
+    "start:dev": "npx nodemon src/index.ts",
+    "start:prod": "tsc && node dist/index.js"
   },
   "repository": {
     "type": "git",
