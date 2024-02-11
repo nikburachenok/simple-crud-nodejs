@@ -2,11 +2,10 @@
   "name": "simple-crud-application",
   "version": "1.0.0",
   "description": "The application with simple API for creating, reading, updating and deleting users",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
-    "start": "nodemon src/index.js"
+    "start": "npx nodemon src/index.ts"
   },
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/nikburachenok/simple-crud-nodejs.git"
@@ -24,7 +23,9 @@
   "homepage": "https://github.com/nikburachenok/simple-crud-nodejs#readme",
   "devDependencies": {
     "@types/node": "^20.11.17",
+    "@types/uuid": "^9.0.8",
     "nodemon": "^3.0.3",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
   "dependencies": {
