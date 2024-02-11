@@ -33,12 +33,12 @@ const updateUser = (userId: string, updatedUser: User) => {
     }
 };
 
-const removeUser = (userId: string) => {
+export const removeUserDBL = (userId: string) => {
     const userIndex = users.findIndex(user => user.id === userId);
 
     if (userIndex !== -1) {
-        return users.splice(userIndex, 1)[0];
+        return users.splice(userIndex, 1)[0].id;
     } else {
-        return null; // Indicate that the product was not found
+        return null;
     }
 };

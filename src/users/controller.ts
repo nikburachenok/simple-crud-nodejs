@@ -4,7 +4,8 @@ import { sendResponse } from '../handlers/responseSender';
 import {
     getUsersDBL,
     saveUserDBL,
-    getUserByIdDBL
+    getUserByIdDBL,
+    removeUserDBL
 } from './repository';
 import { User } from "./model";
 
@@ -105,9 +106,20 @@ export const removeUser = (req: http.IncomingMessage, res: http.ServerResponse<h
         );
         return;
     }
-    // Remove user
+    const removedUserId = removeUserDBL(userId);
+    if (removedUserId) {
+        sendResponse(
+            res,
+            200,
+            { "Content-Type": "application/json" },
+            `User with id equals ${removedUserId} was successfully removed`
+        );
+    } else {
+        sendResponse(
+            res,
+            404,
+            { "Content-Type": "application/json" },
+            `User with id equals ${userId} does not exists`
+        );
+    }
 }
-
-// const validateFields = (user: User) {
-
-// }
