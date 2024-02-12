@@ -78,7 +78,6 @@ export const saveUser = async (req: http.IncomingMessage, res: http.ServerRespon
                 );
             }
         } catch (error) {
-            console.log(error);
             sendResponse(
                 res,
                 500,
@@ -174,7 +173,7 @@ export const removeUser = async (req: http.IncomingMessage, res: http.ServerResp
     if (removedUserId) {
         sendResponse(
             res,
-            200,
+            204,
             { "Content-Type": "application/json" },
             `User with id equals ${removedUserId} was successfully removed`
         );

@@ -103,9 +103,6 @@ try {
         });
     }
 } catch {
-    process.on('SIGINT', async () => {
-        await writeFile('[]');
-        process.exit();
-    });
+    writeFile('[]');
 }
 
