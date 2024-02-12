@@ -31,10 +31,12 @@ try {
             server.on('request', async (req, res) => {
                 if (req.method === 'GET' ||  req.method === 'DELETE') {
                     workers[nextWorker].send({ type: 'request', data: { url: req.url, method: req.method, data: null } });
+                    nextWorker < Object.values(workers).length - 1 ? nextWorker++ : nextWorker = 0;
                 } else {
                     req.on('data', (d) => {
                         const data = d.toString();
                         workers[nextWorker].send({ type: 'request', data: { url: req.url, method: req.method, data } });
+                        nextWorker < Object.values(workers).length - 1 ? nextWorker++ : nextWorker = 0;
                     })
                 }
                 cluster.once('message', (worker: any, message: any) => {
@@ -43,7 +45,6 @@ try {
                         sendResponse(res, statusCode, contentType, data);
                     }
                 });
-                nextWorker < Object.values(workers).length - 1 ? nextWorker++ : nextWorker = 1;
             })
             process.on('SIGINT', async () => {
                 await writeFile('[]');
@@ -76,9 +77,7 @@ try {
                     res.on('data', (chunk) => {
                         data += chunk.toString();
                     });
-                    res.on('end', () => {
-                        console.log('end');
-                    });
+                    res.on('end', () => {});
                 });
 
                 req.on('error', (error) => {
