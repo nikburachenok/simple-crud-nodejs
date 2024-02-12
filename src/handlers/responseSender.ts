@@ -12,6 +12,8 @@ export const sendResponse = (
         if (process.send) {
             process.send({type: 'response', statusCode, contentType, data});
         }
+        res.writeHead(statusCode, contentType);
+        res.end(JSON.stringify(data));
     } else {
         res.writeHead(statusCode, contentType);
         res.end(JSON.stringify(data));
