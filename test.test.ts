@@ -2,16 +2,21 @@ import fs from 'fs';
 import path from 'path';
 import UserRepository from "./src/users/repository";
 import * as uuid from 'uuid';
-import { User } from 'users/model';
 
 describe('check server', () => {
     beforeAll(async () => {
         fs.writeFile(path.resolve('./src/users/', 'db.json'), '[]', () => {})
     })
 
+    afterAll(async () => {
+        fs.writeFile(path.resolve('./src/users/', 'db.json'), '[]', () => {})
+    })
+
     test('Testing of getUsersDBL()', async () => {
         let userRepository = new UserRepository();
-        expect(await userRepository.getUsersDBL()).toBe([]);
+        const response = await userRepository.getUsersDBL();
+        console.log(response);
+        expect(response).toEqual([]);
     });
 
     test('Testing saveUserDBL()', async () => {
