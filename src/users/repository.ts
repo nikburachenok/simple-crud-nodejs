@@ -1,44 +1,54 @@
 import { User } from "./model";
 import * as uuid from 'uuid';
+import { writeFile, readFile } from "../utils/fsUtils";
 
-let users = new Array<User>;
+export default class UserRepository {
+    async getUsersDBL() {
+        return JSON.parse((await readFile()).toString());
+    };
 
-export const getUsersDBL = () => {
-    return users;
-};
-
-export const getUserByIdDBL = (userId: string) => {
-    return users.find((user) => user.id === userId);
-};
+    async getUserByIdDBL(userId: string) {
+        let users = JSON.parse((await readFile()).toString());
+        let user = users.find((user: User) =>  user.id === userId);
+        return user;
+    };
 
 
-export const saveUserDBL = (user: User) => {
-    user.id = uuid.v4();
-    users.push(user);
-    return user.id;
-};
+    async saveUserDBL(user: User) {
+        let users = JSON.parse((await readFile()).toString());
+        user.id = uuid.v4();
+        users.push(user);
+        await writeFile(JSON.stringify(users));
+        return user.id;
+    };
 
-export const updateUserDBL = (userId: string, updatedUser: User) => {
-    const userIndex = users.findIndex(user => user.id === userId);
+    async updateUserDBL(userId: string, updatedUser: User) {
+        let users = JSON.parse((await readFile()).toString());
+        const userIndex = users.findIndex((user: User) => user.id === userId);
 
-    if (userIndex !== -1) {
-        users[userIndex] = {
-            ...users[userIndex],
-            ...updatedUser,
-            id: userId,
-        };
-        return users[userIndex];
-    } else {
-        return null;
-    }
-};
+        if (userIndex !== -1) {
+            users[userIndex] = {
+                ...users[userIndex],
+                ...updatedUser,
+                id: userId,
+            };
+            await writeFile(JSON.stringify(users));
+            return users[userIndex];
+        } else {
+            return null;
+        }
+    };
 
-export const removeUserDBL = (userId: string) => {
-    const userIndex = users.findIndex(user => user.id === userId);
+    async removeUserDBL(userId: string) {
+        let users = JSON.parse((await readFile()).toString());
+        const userIndex = users.findIndex((user: User) => user.id === userId);
 
-    if (userIndex !== -1) {
-        return users.splice(userIndex, 1)[0].id;
-    } else {
-        return null;
-    }
-};
+        if (userIndex !== -1) {
+            let removedUser = users.splice(userIndex, 1)[0];
+            await writeFile(JSON.stringify(users));
+            return removedUser.id;
+        } else {
+            return null;
+        }
+    };
+}

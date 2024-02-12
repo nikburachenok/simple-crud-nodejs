@@ -9,7 +9,7 @@ import {
 } from '../users/controller';
 import { sendResponse } from './responseSender';
 
-export const launchRouter = (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
+export const launchRouter = async (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
     if (req.url) {
         const requestUrl = url.parse(req.url, true);
         const urlParameters = requestUrl.path?.split('/');
@@ -24,15 +24,15 @@ export const launchRouter = (req: http.IncomingMessage, res: http.ServerResponse
         }
 
         if (req.method === 'GET' && requestUrl.path === '/api/users') {
-            getUsers(res)
+            await getUsers(res)
         } else if (req.method === 'GET' && requestUrl.path?.startsWith('/api/users/')) {
-            getUserById(req, res, urlParameters[3]);
+            await getUserById(req, res, urlParameters[3]);
         } else if (req.method === 'POST' && requestUrl.path === '/api/users') {
-            saveUser(req, res);
+            await saveUser(req, res);
         } else if (req.method === 'PUT' && requestUrl.path?.startsWith('/api/users/')) {
-            updateUser(req, res, urlParameters[3]);
+            await updateUser(req, res, urlParameters[3]);
         } else if (req.method === 'DELETE'&& requestUrl.path?.startsWith('/api/users/')) {
-            removeUser(req, res, urlParameters[3]);
+            await removeUser(req, res, urlParameters[3]);
         } else {
             sendResponse(
                 res,

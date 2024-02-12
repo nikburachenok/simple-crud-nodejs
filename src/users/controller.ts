@@ -1,20 +1,16 @@
 import http from 'http';
 import * as uuid from 'uuid';
 import { sendResponse } from '../handlers/responseSender';
-import {
-    getUsersDBL,
-    saveUserDBL,
-    getUserByIdDBL,
-    removeUserDBL,
-    updateUserDBL
-} from './repository';
+import UserRepository from './repository';
 import { User } from "./model";
 
-export const getUsers = (res: http.ServerResponse<http.IncomingMessage>) => {
-    sendResponse(res, 200, { "Content-Type": "application/json" }, getUsersDBL());
+const userRepository = new UserRepository();
+export const getUsers = async (res: http.ServerResponse<http.IncomingMessage>) => {
+    let users = await userRepository.getUsersDBL();
+    sendResponse(res, 200, { "Content-Type": "application/json" }, users);
 }
 
-export const getUserById = (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>, userId: string) => {
+export const getUserById = async (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>, userId: string) => {
     if (!uuid.validate(userId)){
         sendResponse(
             res,
@@ -24,7 +20,7 @@ export const getUserById = (req: http.IncomingMessage, res: http.ServerResponse<
         );
         return;
     }
-    const user = getUserByIdDBL(userId);
+    const user = await userRepository.getUserByIdDBL(userId);
     if (user) {
         sendResponse(
             res,
@@ -42,12 +38,10 @@ export const getUserById = (req: http.IncomingMessage, res: http.ServerResponse<
     }
 }
 
-export const saveUser = (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
+export const saveUser = async (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) => {
     let requestBody = '';
-    req.on('data', (chunk) => {
+    req.on('data', async (chunk) => {
         requestBody += chunk;
-    });
-    req.on('end', () => {
         try {
             const { username, age, hobbies, id} = JSON.parse(requestBody);
             let isValidInput =
@@ -68,7 +62,7 @@ export const saveUser = (req: http.IncomingMessage, res: http.ServerResponse<htt
             }
             if (isValidInput) {
                 const user = JSON.parse(requestBody) as User;
-                const newUserId = saveUserDBL(user);
+                const newUserId = await userRepository.saveUserDBL(user);
                 sendResponse(
                     res,
                     201,
@@ -84,6 +78,7 @@ export const saveUser = (req: http.IncomingMessage, res: http.ServerResponse<htt
                 );
             }
         } catch (error) {
+            console.log(error);
             sendResponse(
                 res,
                 500,
@@ -94,7 +89,7 @@ export const saveUser = (req: http.IncomingMessage, res: http.ServerResponse<htt
     });
 }
 
-export const updateUser = (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>, userId: string) => {
+export const updateUser = async (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>, userId: string) => {
     if (!uuid.validate(userId)){
         sendResponse(
             res,
@@ -106,10 +101,8 @@ export const updateUser = (req: http.IncomingMessage, res: http.ServerResponse<h
     }
 
     let requestBody = '';
-    req.on('data', (chunk) => {
+    req.on('data', async (chunk) => {
         requestBody += chunk;
-    });
-    req.on('end', () => {
         try {
             const { username, age, hobbies, id} = JSON.parse(requestBody);
             let isValidInput =
@@ -132,7 +125,7 @@ export const updateUser = (req: http.IncomingMessage, res: http.ServerResponse<h
             }
             if (isValidInput) {
                 const user = JSON.parse(requestBody) as User;
-                const updatedUser = updateUserDBL(userId, user);
+                const updatedUser = await userRepository.updateUserDBL(userId, user);
                 if (updatedUser) {
                     sendResponse(
                         res,
@@ -167,7 +160,7 @@ export const updateUser = (req: http.IncomingMessage, res: http.ServerResponse<h
     });
 }
 
-export const removeUser = (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>, userId: string) => {
+export const removeUser = async (req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>, userId: string) => {
     if (!uuid.validate(userId)){
         sendResponse(
             res,
@@ -177,7 +170,7 @@ export const removeUser = (req: http.IncomingMessage, res: http.ServerResponse<h
         );
         return;
     }
-    const removedUserId = removeUserDBL(userId);
+    const removedUserId = await userRepository.removeUserDBL(userId);
     if (removedUserId) {
         sendResponse(
             res,
