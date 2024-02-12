@@ -26,7 +26,7 @@ try {
 
             server.listen(MAIN_PORT, async () => {
                 await writeFile('[]');
-                console.log(` Worker server ${process.pid} listening on http://localhost:${MAIN_PORT}`);
+                console.log(` Worker server ${process.pid} listening on http://localhost:${MAIN_PORT}. PLEASE WAITING FOR WORKERS!!!`);
             });
             server.on('request', async (req, res) => {
                 if (req.method === 'GET' ||  req.method === 'DELETE') {
