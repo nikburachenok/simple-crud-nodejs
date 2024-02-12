@@ -11,7 +11,6 @@ export const sendResponse = (
     if (!cluster.isPrimary) {
         if (process.send) {
             process.send({type: 'response', statusCode, contentType, data});
-            console.log(`Process was launched on the port # ${process.env.MAIN_PORT}`);
         }
     } else {
         res.writeHead(statusCode, contentType);

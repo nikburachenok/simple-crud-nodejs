@@ -15,7 +15,6 @@ describe('check server', () => {
     test('Testing of getUsersDBL()', async () => {
         let userRepository = new UserRepository();
         const response = await userRepository.getUsersDBL();
-        console.log(response);
         expect(response).toEqual([]);
     });
 
